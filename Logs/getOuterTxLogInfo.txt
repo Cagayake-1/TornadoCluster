@@ -1,0 +1,14 @@
+0.1ETH_NormalTx
+0.1ETH_InternalTx
+0.1ETH_InternalTx
+1ETH_NormalTx
+1ETH_NormalTx
+1ETH_NormalTx
+1ETH_NormalTx
+1ETH_NormalTx
+1ETH_InternalTx
+1ETH_InternalTx
+1ETH_InternalTx
+1ETH_InternalTx
+1ETH_InternalTx
+1ETH_InternalTx
