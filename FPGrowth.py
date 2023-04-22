@@ -1,12 +1,10 @@
 from collections import OrderedDict
+from tqdm import tqdm
 import sys
 import re
 import os.path
-import Logging
 import DataDivide
 import csv
-from tqdm import tqdm
-import utils
 
 class treeNode:
     def __init__(self, nameValue, numOccur, parentNode):
@@ -254,17 +252,25 @@ def count(value, cnt = 6):
     file = "Result/FPGrowth_"+value+'_'+str(cnt)+'.csv'
     uSet = set()
     uList = []
+    real_u = []
     if os.path.exists(file):
         with open(file, "r") as csvFile:
             reader = csv.reader(csvFile)
             for line in reader:
-                uClusterSet = set(line)
-                utils.clusterAppend(uList, uClusterSet)
-                for address in line:
-                    uSet.add(address)
+                uList.append(line)
+                # uClusterSet = set(line)
+                # utils.clusterAppend(uList, uClusterSet)
+                # for address in line:
+                #     uSet.add(address)
+        uList = sorted(uList,key=lambda i : len(i), reverse=True)
+        for cluster in uList:
+            uClusterSet = set(cluster)
+            if len(uSet.intersection(uClusterSet)) == 0:
+                uSet = uSet.union(uClusterSet)
+                real_u.append(uClusterSet)
     else:
-        print(file,"does not")
-    return uList, len(uList), len(uSet)
+        print(file,"does not exist!!")
+    return real_u, len(real_u), len(uSet)
 
 if __name__ == '__main__':
 
@@ -272,17 +278,7 @@ if __name__ == '__main__':
     cnt = int(sys.argv[2])
     print("|", str("Start divide " + str(value) + " support:" + str(cnt)).center(100),"|")
     suffix = value + '_' + str(cnt) 
-
     type = ''.join(re.findall(r'[A-Za-z]', value))
-
-    """--------- Log 信息处理 -----------"""
-    logFile = 'FPGrowthLog_' + suffix + '_Info.txt'
-    logs = []
-    # 如果不存在log文件则创建；存在则读取
-    if os.path.exists('./Logs/' + logFile):
-        with open('./Logs/' + logFile, "r") as rf:
-            logs = rf.read().splitlines()
-    logger = Logging.createLog(logFile)
     vdir, data = DataDivide.loadAllData(type)
     i = vdir.index(value)
     v = value

@@ -1,9 +1,8 @@
 import csv
 import os
 import time
-
+import sys
 import pandas as pd
-
 import Constant
 import TCluster1
 import TCluster2
@@ -168,37 +167,49 @@ def staticAnonymity(type,topk, cnt):
     cntdf.to_excel(path + 'deanonymity_result.xlsx')
 
 if __name__ == '__main__':
+    # 0000000
+    rules = str(sys.argv[1])
+    
     type1 = 'heuristic'
-    # print("{: ^100s}".format(" RULE1: SINGLE DW "))
-    # print("{: ^100s}".format("----------------------------------------------------------------"))
-    # Cluster(tx_path, "rule1")
-    # print("{: ^100s}".format(" RULE2: MULTI SINGLE DW "))
-    # print("{: ^100s}".format("----------------------------------------------------------------"))
-    # Cluster(tx_path, "rule2")
-    # print("{: ^100s}".format(" RULE3: MULTI DW "))
-    # print("{: ^100s}".format("----------------------------------------------------------------"))
-    # Cluster(tx_path, "rule3")
-
-    # print("{: ^100s}".format(" RULE4: WITHDRAW FROM-TO-DIF and FEE-0 "))
-    # print("{: ^100s}".format("----------------------------------------------------------------"))
-    # Cluster(tx_path, "rule4")
+    if rules[0] == '1':
+        print("{: ^100s}".format(" RULE1: SINGLE DW "))
+        print("{: ^100s}".format("----------------------------------------------------------------"))
+        Cluster(tx_path, "rule1")
+    if rules[1] == '1':
+        print("{: ^100s}".format(" RULE2: MULTI SINGLE DW "))
+        print("{: ^100s}".format("----------------------------------------------------------------"))
+        Cluster(tx_path, "rule2")
+    if rules[2] == '1':
+        print("{: ^100s}".format(" RULE3: MULTI DW "))
+        print("{: ^100s}".format("----------------------------------------------------------------"))
+        Cluster(tx_path, "rule3")
+    if rules[3] == '1':
+        print("{: ^100s}".format(" RULE4: WITHDRAW FROM-TO-DIF and FEE-0 "))
+        print("{: ^100s}".format("----------------------------------------------------------------"))
+        Cluster(tx_path, "rule4")
 
     type2 = 'mode'
-    # print("{: ^100s}".format(" RULE: TRANSFER MODE"))
-    # print("{: ^100s}".format("----------------------------------------------------------------"))
-    # Cluster(tx_path, "rule5")
-    # print("{: ^100s}".format(" RULE: POOLING MODE"))
-    # print("{: ^100s}".format("----------------------------------------------------------------"))
-    # Cluster(tx_path, "rule6")
-    
-    print("{: ^100s}".format(" FPGrowth MINING "))
-    print("{: ^100s}".format("----------------------------------------------------------------"))
-    Cluster(tx_path, "mine")
+    if rules[4] == '1':
+        print("{: ^100s}".format(" RULE: TRANSFER MODE"))
+        print("{: ^100s}".format("----------------------------------------------------------------"))
+        Cluster(tx_path, "rule5")
+    if rules[5] == '1':
+        print("{: ^100s}".format(" RULE: POOLING MODE"))
+        print("{: ^100s}".format("----------------------------------------------------------------"))
+        Cluster(tx_path, "rule6")
+
+    type3 = 'mine'
+    if rules[6] == '1':
+        print("{: ^100s}".format(" FPGrowth MINING "))
+        print("{: ^100s}".format("----------------------------------------------------------------"))
+        Cluster(tx_path, "mine")
+        
+    # staticAnonymity([type1,type3],500,3)
+
     # print("{: ^100s}".format(" FINAL RESULT"))
     # print("{: ^100s}".format("----------------------------------------------------------------"))
     
     # type3 = 'apriori'
-    # staticAnonymity([type1,type3],500,3)
     # print("{: ^100s}".format(" FINAL RESULT"))
     # print("{: ^100s}".format("----------------------------------------------------------------"))
     # uSet = set()
