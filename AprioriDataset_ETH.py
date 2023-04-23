@@ -120,6 +120,27 @@ def calcFeature(addr, addrDF, txdf):
 
     return addrDF
     
+def isCalc(value, addr, addrDF):
+    if 'Value_avg' in addrDF.columns.values and np.isnan(addrDF.loc[addr,'Value_avg']) == False:
+        return True
+    oldPath = addrSetFilePath + value + '_Address_Statics_less.csv'
+    if os.path.exists(oldPath):
+        old = utils.readCsvFile(oldPath, 0)
+        if addr in old.index.values and np.isnan(old.loc[addr,'Value_avg']) == False:
+            addrDF.loc[addr,'Inter_avg'] = old.loc[addr,'Inter_avg']
+            addrDF.loc[addr,'Inter_mid'] = old.loc[addr,'Inter_mid']
+            addrDF.loc[addr,'Inter_std'] = old.loc[addr,'Inter_std']
+            addrDF.loc[addr,'txCnt'] = old.loc[addr,'txCnt']
+            addrDF.loc[addr,'Zone'] = old.loc[addr,'Zone']
+            addrDF.loc[addr,'NorGasPri_avg'] = old.loc[addr,'NorGasPri_avg']
+            addrDF.loc[addr,'NorGasPri_mid'] = old.loc[addr,'NorGasPri_mid']
+            addrDF.loc[addr,'NorGasPri_std'] = old.loc[addr,'NorGasPri_std']
+            addrDF.loc[addr,'Value_avg'] = old.loc[addr,'Value_avg']
+            addrDF.loc[addr,'Value_mid'] = old.loc[addr,'Value_mid']
+            addrDF.loc[addr,'Value_std'] = old.loc[addr,'Value_std']
+            return True
+    return False
+    
     
 def dealOutTxDf(value, type, addrDF, addrDir, txNet):
     file_list = os.listdir(outTxSetFilePath)
@@ -131,10 +152,14 @@ def dealOutTxDf(value, type, addrDF, addrDir, txNet):
             start_a = int(logs[len(logs) - 1].split('-')[1])
             start_t = int(logs[len(logs) - 1].split('-')[2])
     # ----------- 读取地址处理断点位置、外部文件读取位置 --- 结束 ------
+    addrDF[~addrDF.index.duplicated(keep='first')]
+    print(addrDF.shape[0])
     txdf = initPklTxlist(start_t, value, type, file_list)
     print("|", str("Start  addr:" + str(start_a+1) + " pkl:" + str(start_t)).center(50), "|", str("Calculate " + value + " ").center(50), "|")
     for i in tqdm(range(start_a+1, addrDF.shape[0])):
         addr = addrDF.index[i]
+        if isCalc(value, addr, addrDF):
+            continue
         addr_txdf = txdf.loc[(txdf['from'] == addr) | (txdf['to'] == addr)]
         # 交易量：
         if token:
@@ -167,10 +192,13 @@ def dealOutTxDf(value, type, addrDF, addrDir, txNet):
                     index = index + 1
                     txdf = next_txdf
             start_t = index - 1
+        print(value," len:", addrDF.shape[0])
         addrDF = calcFeature(addr, addrDF, addr_txdf)
         utils.saveCsvFile(addrSetFilePath + addrDir, addrDF)
         logger.info(addrDir + '-' + str(i) + '-' + str(start_t))
     logger.info(value)
+    
+    print(addrDF.shape[0])
 
 
 if __name__ == '__main__':
@@ -191,4 +219,6 @@ if __name__ == '__main__':
             if addr_dir.split('_')[0] == value:
                 addrDir = addr_dir
                 addrDF = utils.readCsvFile(addrSetFilePath+addr_dir,0)
+                break
+        print(addrDF.shape[0])
         dealOutTxDf(value, type, addrDF, addrDir, txNet)

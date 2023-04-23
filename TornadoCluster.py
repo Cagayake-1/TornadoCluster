@@ -80,7 +80,7 @@ def Cluster(tp, rule):
                 uList, userClusterNum, clusteredAddressNum = TCluster6.OuterPoolTxCluster(df, addr_df, value, uList)
             col = ['U-'+rule+'-20','A-'+rule+'-20']
         elif rule == "mine":
-            cnt = 6
+            cnt = 3
             uList, userClusterNum, clusteredAddressNum = FPGrowth.count(value,cnt)
             col = ['U-'+rule+'-'+str(cnt),'A-'+rule+'-'+str(cnt)]
         cntdf.loc[value,col] = userClusterNum,clusteredAddressNum

@@ -274,12 +274,15 @@ def count(value, cnt = 6):
 
 if __name__ == '__main__':
 
+    # 'FPGrowth.py [value] [support] [binsnum]'
+
     value = sys.argv[1]
     cnt = int(sys.argv[2])
+    binnum = int(sys.argv[3])
     print("|", str("Start divide " + str(value) + " support:" + str(cnt)).center(100),"|")
     suffix = value + '_' + str(cnt) 
     type = ''.join(re.findall(r'[A-Za-z]', value))
-    vdir, data = DataDivide.loadAllData(type)
+    vdir, data = DataDivide.loadAllData(type, value, binnum)
     i = vdir.index(value)
     v = value
     dataset  = data[i]

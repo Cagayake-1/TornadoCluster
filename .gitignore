@@ -4,4 +4,4 @@ __pycache__/*
 Dataset/*
 ABI/*
 Figure/*
-Result/*
+*.log

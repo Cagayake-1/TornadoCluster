@@ -15,7 +15,7 @@ tctxFilePath = Constant.tornadoTxPath
 values = Constant.values
 resultPath = Constant.resultPath
 
-def processZone(z, vdir, dfList, labels, index):
+def processZone(z, dfList, labels, index):
     for idx, df in enumerate(dfList):
         df = pd.DataFrame(df, columns=["Cnt","Zone"])
         df = df.loc[(df['Cnt'] != 0) & (df['Cnt'] != 1)]
@@ -28,7 +28,7 @@ def processZone(z, vdir, dfList, labels, index):
                 index[idx].append(list(group.index.values))
     return index
 
-def processVolume(act, vdir, dfList, labels, index):
+def processVolume(act, dfList, labels, index):
     for idx, df in enumerate(dfList):
         df = pd.DataFrame(df, columns=["Cnt","Inter_avg","Zone","NorGasPri_avg","Value_avg"])
         df = df.loc[(df['Cnt'] != 0) & (df['Cnt'] != 1) & df['Inter_avg']!=0]
@@ -37,12 +37,12 @@ def processVolume(act, vdir, dfList, labels, index):
         df = df.drop_duplicates()
         df['activity_group'] = pd.cut(df.activity,bins = act, labels=labels)
         groups = df.groupby(df.activity_group)
-        for name, group in groups:
+        for _, group in groups:
             if group.shape[0] > 1:
                 index[idx].append(list(group.index.values))
     return index
 
-def processGas(bin, vdir, dfList, labels, index):
+def processGas(bin, dfList, labels, index):
     for idx, df in enumerate(dfList):
         df = pd.DataFrame(df, columns=["Cnt","NorGasPri_avg"])
         df = df.loc[(df['Cnt'] != 0) & (df['Cnt'] != 1)]
@@ -50,12 +50,12 @@ def processGas(bin, vdir, dfList, labels, index):
         df = df.drop_duplicates()
         df['norGasPrice_group'] = pd.cut(df.NorGasPri_avg,bins = bin, labels=labels)
         groups = df.groupby(df.norGasPrice_group)
-        for name, group in groups:
+        for _, group in groups:
             if group.shape[0] > 1:
                 index[idx].append(list(group.index.values))
     return index
 
-def processValue(bin, vdir, dfList, labels, index):
+def processValue(bin, dfList, labels, index):
     for idx, df in enumerate(dfList):
         df = pd.DataFrame(df, columns=["Cnt","Value_avg"])
         df = df.loc[(df['Cnt'] != 0) & (df['Cnt'] != 1)]
@@ -106,26 +106,76 @@ def loadData(feature, vdir, bins=[]):
     index = [[] for _ in range(vlen)] 
     labels = np.arange(binlen)
     if feature == 'activity':
-        index = processVolume(bins, vdir, dfList, labels, index)
+        index = processVolume(bins, dfList, labels, index)
     if feature == 'zone':
-        index = processZone(bins, vdir, dfList, labels, index)
+        index = processZone(bins, dfList, labels, index)
     if feature == 'gasPrice':
-        index = processGas(bins, vdir, dfList, labels, index)
+        index = processGas(bins, dfList, labels, index)
     if feature == 'value':
-        index = processValue(bins, vdir, dfList, labels, index)
+        index = processValue(bins, dfList, labels, index)
     if feature == 'txCnt':
         index = processTxCnt(dfList, index)
     if feature == 'relayer':
         index = processRelayer(vdir, dfList, index)
     return index
 
+def loadGasBins(value, binsnum):
+    for addr_dir in os.listdir(addrSetFilePath):
+        a = addr_dir.split('_')[0]
+        if a == value:
+            df = utils.readCsvFile(addrSetFilePath+addr_dir,0)
+            break
+    print(addrSetFilePath+addr_dir)
+    print("addr len:",len(df))
+    df = pd.DataFrame(df, columns=["Cnt","NorGasPri_avg"])
+    df = df.loc[(df['Cnt'] != 0) & (df['Cnt'] != 1)]
+    df = df.sort_values(by="NorGasPri_avg",ascending=False)
+    df = df.drop_duplicates()
+    print("addr len:",len(df))
+    groups,bin_edges = pd.qcut(df.NorGasPri_avg,binsnum,retbins = True)
+    pd.set_option('expand_frame_repr', False)
+    bins = bin_edges.tolist()
+    return bins
 
-def loadAllData(type):
+def loadActBins(value, binsnum):
+    for addr_dir in os.listdir(addrSetFilePath):
+        a = addr_dir.split('_')[0]
+        if a == value:
+            df = utils.readCsvFile(addrSetFilePath+addr_dir,0)
+    print("addr len:",len(df))
+    df = pd.DataFrame(df, columns=["Cnt","Inter_avg"])
+    df = df.loc[(df['Cnt'] != 0) & (df['Cnt'] != 1) & df['Inter_avg']!=0]
+    df['activity'] = df['Cnt']/df['Inter_avg'].abs()
+    df = df.sort_values(by="activity",ascending=False)
+    df = df.drop_duplicates()
+    print("addr len:",len(df))
+    groups,bin_edges = pd.qcut(df.activity,binsnum,retbins = True)
+    pd.set_option('expand_frame_repr', False)
+    bins = bin_edges.tolist()
+    return bins
+
+def loadValBins(value, binsnum):
+    for addr_dir in os.listdir(addrSetFilePath):
+        a = addr_dir.split('_')[0]
+        if a == value:
+            df = utils.readCsvFile(addrSetFilePath+addr_dir,0)
+    print(len(df))
+    df = pd.DataFrame(df, columns=["Cnt","Value_avg"])
+    df = df.loc[(df['Cnt'] != 0) & (df['Cnt'] != 1)]
+    df = df.sort_values(by="Value_avg",ascending=False)
+    df = df.drop_duplicates()
+    print(len(df))
+    groups,bin_edges = pd.qcut(df.Value_avg,binsnum,retbins = True, duplicates='drop')
+    pd.set_option('expand_frame_repr', False)
+    bins = bin_edges.tolist()
+    return bins
+
+def loadAllData(type, value, binsnum):
     vdir = []
-    for value in values:
-        v_type = ''.join(re.findall(r'[A-Za-z]', value))
+    for v in values:
+        v_type = ''.join(re.findall(r'[A-Za-z]', v))
         if v_type == type:
-            vdir.append(value)
+            vdir.append(v)
         
     data = [0]*len(vdir)
         
@@ -141,39 +191,31 @@ def loadAllData(type):
     relayer_data = loadData(fe, vdir)
 
     if type == 'ETH':
-        actFile = 'Dataset/ETH_ActBin.txt'
-        gasFile = 'Dataset/ETH_GasBin.txt'
-        valFile = 'Dataset/ETH_ValBin.txt'
+        vdir = [value]
         fe = 'activity'
-        lines = open(actFile,'r')
-        for line in lines:
-            bins = eval(line)
+        bins = loadActBins(value, binsnum)
         acti_data = loadData(fe, vdir, bins)
 
         fe = 'gasPrice'
-        lines = open(gasFile,'r')
-        for line in lines:
-            bins = eval(line)
+        bins = loadGasBins(value, binsnum)
         gas_data = loadData(fe, vdir, bins)
 
         fe = 'value'
-        lines = open(valFile,'r')
-        for line in lines:
-            bins = eval(line)
-        value_data = loadData(fe, vdir, bins)
+        bins = loadValBins(value, binsnum)
+        value_data = loadData(fe,vdir, bins)
 
     else:
         fe = 'activity'
         bins = Constant.ActBins[type]
-        acti_data = loadData(fe, vdir, bins)
+        acti_data = loadData(fe,vdir, bins)
 
         fe = 'gasPrice'
         bins = Constant.GasBins[type]
-        gas_data = loadData(fe, vdir, bins)
+        gas_data = loadData(fe,vdir, bins)
 
         fe = 'value'
         bins = Constant.ValBins[type]
-        value_data = loadData(fe, vdir, bins)
+        value_data = loadData(fe,vdir, bins)
 
     for i,_ in enumerate(vdir):
         data[i] = acti_data[i] + zone_data[i] + gas_data[i] + value_data[i] +  relayer_data[i] + cnt_data[i]

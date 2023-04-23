@@ -332,8 +332,8 @@ ap = Constant.addressPath
 otp = Constant.addressOuterTxPath
 ethPkl = Constant.pklFileCnt
 if __name__ == '__main__':
-    # getAllAddress()
-    # getAddressTx()
+    getAllAddress()
+    getAddressTx()
     # getAddressERC20Tx()
     # pklToCsv()
     OuterTxSize()
