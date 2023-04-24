@@ -90,11 +90,11 @@ def calcFeature(addr, addrDF, txdf):
     # 网络交易数量
     txNet = pd.read_csv('Dataset/txPerSecond.tsv', sep='\t')
     txNet.columns=['date','txnum']
+    txNet['date'] = txNet['date'].astype(str)
+    txdf['date'] = txdf['date'].astype(str)
     # 归一化
-    def calc(gasPrice, date, txNet):
-        txnum = txNet.loc[txNet['date'] == date, 'txnum']
-        return gasPrice / txnum.values[0]
-    txdf['normalGasPrice'] = txdf.apply(lambda x: calc(x['gasPrice'],x['date'],txNet),axis=1)
+    txdf = txdf.join(txNet.set_index('date'), on='date')
+    txdf['normalGasPrice'] = txdf['gasPrice']/txdf['txnum']
     gavg = txdf.normalGasPrice.mean()
     gstd = txdf.normalGasPrice.std()
     gmid = txdf.normalGasPrice.median()
@@ -188,7 +188,7 @@ def dealOutTxDf(value, type, addrDF, addrDir):
                 addr_txdf = addr_txdf.drop_duplicates(subset=['hash'], keep='last')
                 len_new = addr_txdf.shape[0]
                 if len_old - len_new == 0:
-                    addr_txdf = getOuterTxAppend(addr, type)
+                    # addr_txdf = getOuterTxAppend(addr, type)
                     if abs(txCnt - addr_txdf.shape[0]) > 10:
                         print("\n|", str("ATTENTION: 数据对不上 " + str(addr) + " abs ( txCnt:" + str(txCnt) + " - txdf:" + str(addr_txdf.shape[0]) + " ) = " + str(txCnt - addr_txdf.shape[0])).center(100), "|")
                     break
