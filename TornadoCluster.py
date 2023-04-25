@@ -67,7 +67,7 @@ def Cluster(tp, rule):
                     TCluster5.ethOuterTxCluster(norm_path, addr_df, value, uList)
             else:
                 df = utils.readDataFromCsv(outer_tx_path + 'csv/' + value + '_OuterTokenTx.csv')
-                uList, userClusterNum, clusteredAddressNum = TCluster5.outerTxCluster(df, addr_df, value, uList)
+                userClusterNum, clusteredAddressNum = TCluster5.outerTxCluster(df, addr_df, value, uList)
             col = ['U-'+rule,'A-'+rule]
         elif rule == "rule6":
             addr_df = pd.read_csv(ap + value + "_Address_Statics.csv", index_col=0, low_memory=False)
