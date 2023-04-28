@@ -126,7 +126,7 @@ def valueHist(addr, value, token = False):
 
     txdf.value.plot(kind='hist', bins = 35, color = '#2878b5')
     plt.ylabel('交易数量',fontfamily='sans-serif')
-    plt.xlabel('交易金额（ETH）',fontfamily='sans-serif')
+    plt.xlabel('交易金额（ETH）',fontfamily=['Times New Roman','simhei'])
     plt.grid(axis='y',linestyle=':')
     # plt.hist(txdf.value,bins=100)
     
@@ -134,20 +134,20 @@ def valueHist(addr, value, token = False):
     # txdf.hist('value',color = '#2878b5', bins = 50)
     plt.show()
     
-    #中位数
-    vmid = txdf.value.median()
+    # #中位数
+    # vmid = txdf.value.median()
 
-    #平均数
-    vavg = txdf.value.mean()
+    # #平均数
+    # vavg = txdf.value.mean()
 
-    #标准差
-    vstd = txdf.value.std()
+    # #标准差
+    # vstd = txdf.value.std()
 
-    #最小最大
-    vmin = txdf.value.min()
-    vmax = txdf.value.max()
+    # #最小最大
+    # vmin = txdf.value.min()
+    # vmax = txdf.value.max()
 
-    print("tx value min:", vmin," max:",vmax," mid:",vmid," avg:",vavg," std:",vstd)
+    # print("tx value min:", vmin," max:",vmax," mid:",vmid," avg:",vavg," std:",vstd)
 
 
 # 交易手续费Gas(Gas Limit\Gas Price\Gas Used)
@@ -178,7 +178,7 @@ def gasHist(addr, value, token = False):
     txdf.normalGasPrice.plot(kind='hist',bins = 35,alpha=1,color='#f8ac8c')
 
     plt.ylabel('交易数量',fontfamily='sans-serif')
-    plt.xlabel('Gas Price (Gwei)')
+    plt.xlabel('NGP (Gwei)')
     plt.grid(axis='y',linestyle=':')
     # ax.set_yticks(np.arange(0,21,2),labels=np.arange(0,21,2))
 
@@ -300,10 +300,10 @@ def zoneHist(addr, value, token = False):
 
 if __name__ == '__main__':
     # valueHist(aExp6, v6)
-    # valueHist(aExp2, v2)
+    valueHist(aExp2, v2)
     # gasHist(aExp6,v6)
-    # gasHist(aExp8,v8)
+    # gasHist(aExp7,v7)
     # gasHist(aExp9,v9)
     # volumeHist(aExp1,v1)
     # volumeHist(aExp2,v2)
-    zoneHist(aExp1,v1)
+    # zoneHist(aExp1,v1)

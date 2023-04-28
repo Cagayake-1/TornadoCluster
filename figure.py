@@ -11,7 +11,7 @@ tp = Constant.tornadoTxPath
 ap = Constant.addressPath
 otp = Constant.addressOuterTxPath
 txCsvPath = tp + 'CSV/'
-
+alp = 0.6
 
 def txCntFigure():
     values = ['0.1ETH', '1ETH', '10ETH', '100ETH',  
@@ -118,23 +118,22 @@ def ethCnt():
     total_heighth, n = (0.84)*1.15, 3
     heighth = total_heighth / n
 
-    # 
-    fig,ax = plt.subplots(dpi=200)
+    # 画幅设置
+    fig,ax = plt.subplots(dpi=200,figsize=(7,5))
 
-
-    ax.set_yticks(y_pos, labels=values, fontsize=16, fontname='Times New Roman',fontweight='bold')
+    ax.set_yticks(y_pos, labels=values, fontsize=18, fontname='Times New Roman',fontweight='bold')
     # 将中间的坐标轴、边框设为不可见
     ax.spines.right.set_visible(False) #边框不可见
     ax.spines.top.set_visible(False)
 
     # 设置边框距离
-    fig.subplots_adjust(top=0.99,bottom=0.115,left=0.14,right=0.920)
+    fig.subplots_adjust(top=0.99,bottom=0.088,left=0.145,right=0.93)
 
     # 绘制柱形图
-    barh_tx = ax.barh(y_pos - heighth, txCnts,  height=heighth, label='Transactions',color='#2878b5')
-    barh_d = ax.barh(y_pos , dCnts, height=heighth, label='Deposit',color='#9ac9db')
-    barh_w = ax.barh(y_pos, wCnts, height=heighth, left=dCnts, label='Withdraw',color='#f8ac8c')
-    barh_as = ax.barh(y_pos + heighth, asCnts, heighth, label='Anonymity Set',color='#c82423')
+    barh_tx = ax.barh(y_pos - heighth, txCnts,  height=heighth, label='Transactions',color='#2878b5',alpha=alp, hatch='////')
+    barh_d = ax.barh(y_pos , dCnts, height=heighth, label='Deposit',color='#9ac9db',alpha=alp)
+    barh_w = ax.barh(y_pos, wCnts, height=heighth, left=dCnts, label='Withdraw',color='#f8ac8c',alpha=alp)
+    barh_as = ax.barh(y_pos + heighth, asCnts, heighth, label='Anonymity Set',color='#c82423',alpha=alp)
 
     
     ax.set_xlim(0,105000,auto=True)
@@ -219,15 +218,15 @@ def typeCnt():
     fig.subplots_adjust(top=0.99,bottom=0.05,left=0.07,right=0.98,wspace=0.03)
 
     # 绘制柱形图
-    barh_tx = ax1.barh(y_pos - heighth, txCnts,  height=heighth, label='Transactions',color='#2878b5')
-    barh_d = ax1.barh(y_pos , dCnts, height=heighth, label='Deposit',color='#9ac9db')
-    barh_w = ax1.barh(y_pos, wCnts, height=heighth, left=dCnts, label='Withdraw',color='#f8ac8c')
-    barh_as = ax1.barh(y_pos + heighth, asCnts, heighth, label='Anonymity Set',color='#c82423')
+    barh_tx = ax1.barh(y_pos - heighth, txCnts,  height=heighth, label='混币交易',color='#2878b5',alpha=alp,hatch='////')
+    barh_d = ax1.barh(y_pos , dCnts, height=heighth, label='混币存款交易',color='#9ac9db',alpha=alp)
+    barh_w = ax1.barh(y_pos, wCnts, height=heighth, left=dCnts, label='混币取款交易',color='#f8ac8c',alpha=alp)
+    barh_as = ax1.barh(y_pos + heighth, asCnts, heighth, label='匿名集',color='#c82423',alpha=alp)
 
-    barh_tx2 = ax2.barh(y_pos - heighth, txCnts,  height=heighth, label='Transactions',color='#2878b5')
-    barh_d2 = ax2.barh(y_pos, dCnts, height=heighth, label='Deposit',color='#9ac9db')
-    barh_w2 = ax2.barh(y_pos, wCnts, height=heighth, left=dCnts, label='Withdraw',color='#f8ac8c')
-    barh_as2 = ax2.barh(y_pos + heighth, asCnts, heighth, label='Anonymity Set',color='#c82423')
+    barh_tx2 = ax2.barh(y_pos - heighth, txCnts,  height=heighth, label='混币交易',color='#2878b5',alpha=alp,hatch='////')
+    barh_d2 = ax2.barh(y_pos, dCnts, height=heighth, label='混币存款交易',color='#9ac9db',alpha=alp)
+    barh_w2 = ax2.barh(y_pos, wCnts, height=heighth, left=dCnts, label='混币取款交易',color='#f8ac8c',alpha=alp)
+    barh_as2 = ax2.barh(y_pos + heighth, asCnts, heighth, label='匿名集',color='#c82423',alpha=alp)
 
     # ax1.set_xscale('log')
     ax1.set_xlim(0,16000,auto=True)
@@ -251,7 +250,7 @@ def typeCnt():
     ax2.bar_label(barh_as2,fmt='{:,.0f}',padding=2,**kwargs)
 
     ax1.invert_yaxis()
-    ax2.legend(loc='lower right',prop={'family':'Times New Roman','size':17})
+    ax2.legend(loc='lower right',prop={'family':'sans-serif','size':17})
 
     #科学计数法
     formatter = ticker.ScalarFormatter(useMathText=True)
@@ -364,7 +363,7 @@ def txCntByType():
     plt.show()
     
 def daiCnt():
-    values = ['100DAI', '1000DAI', '1w DAI', '10w DAI']
+    values = ['100DAI', '1,000DAI', '10,000 DAI', '100,000 DAI']
     txCnts = [420, 2062, 5790, 6681]
     dCnts = [234,1087,2959,3444]
     wCnts = [184,973,2831,3237]
@@ -375,8 +374,8 @@ def daiCnt():
     total_heighth, n = (0.84)*1.15, 3
     heighth = total_heighth / n
 
-    # 
-    fig,ax = plt.subplots(dpi=200)
+    # 画幅设置
+    fig,ax = plt.subplots(dpi=200,figsize=(7,5))
 
 
     ax.set_yticks(y_pos, labels=values, fontsize=18, fontname='Times New Roman',fontweight='bold')
@@ -385,13 +384,13 @@ def daiCnt():
     ax.spines.top.set_visible(False)
 
     # 设置边框距离
-    fig.subplots_adjust(top=0.99,bottom=0.08,left=0.15,right=0.96)
+    fig.subplots_adjust(top=0.99,bottom=0.06,left=0.21,right=0.96)
 
     # 绘制柱形图
-    barh_tx = ax.barh(y_pos - heighth, txCnts,  height=heighth, label='Transactions',color='#2878b5')
-    barh_d = ax.barh(y_pos , dCnts, height=heighth, label='Deposit',color='#9ac9db')
-    barh_w = ax.barh(y_pos, wCnts, height=heighth, left=dCnts, label='Withdraw',color='#f8ac8c')
-    barh_as = ax.barh(y_pos + heighth, asCnts, heighth, label='Anonymity Set',color='#c82423')
+    barh_tx = ax.barh(y_pos - heighth, txCnts,  height=heighth, label='Transactions',color='#2878b5',alpha=alp,hatch='///')
+    barh_d = ax.barh(y_pos , dCnts, height=heighth, label='Deposit',color='#9ac9db',alpha=alp)
+    barh_w = ax.barh(y_pos, wCnts, height=heighth, left=dCnts, label='Withdraw',color='#f8ac8c',alpha=alp)
+    barh_as = ax.barh(y_pos + heighth, asCnts, heighth, label='Anonymity Set',color='#c82423',alpha=alp)
 
     ax.set_xlim(0,7000,auto=True)
     kwargs=dict(fontproperties='Times New Roman',fontstyle='italic',size=14,fontweight='demibold')
@@ -410,7 +409,7 @@ def daiCnt():
     plt.show()
 
 def usdcCnt():
-    values = ['100USDC', '1000USDC']
+    values = ['100USDC', '1,000USDC']
     txCnts = [335,1463]
     dCnts = [150,572]
     wCnts = [184,890]
@@ -422,7 +421,7 @@ def usdcCnt():
     heighth = total_heighth / n
 
     # 
-    fig,ax = plt.subplots(dpi=200)
+    fig,ax = plt.subplots(dpi=200,figsize=(7,2.5))
 
 
     ax.set_yticks(y_pos, labels=values, fontsize=18, fontname='Times New Roman',fontweight='bold')
@@ -432,13 +431,13 @@ def usdcCnt():
 
     
     # 设置边框距离
-    fig.subplots_adjust(top=0.99,bottom=0.1,left=0.18,right=0.97)
+    fig.subplots_adjust(top=0.99,bottom=0.1,left=0.23,right=0.97)
 
     # 绘制柱形图
-    barh_tx = ax.barh(y_pos - heighth, txCnts,  height=heighth, label='Transactions',color='#2878b5')
-    barh_d = ax.barh(y_pos , dCnts, height=heighth, label='Deposit',color='#9ac9db')
-    barh_w = ax.barh(y_pos, wCnts, height=heighth, left=dCnts, label='Withdraw',color='#f8ac8c')
-    barh_as = ax.barh(y_pos + heighth, asCnts, heighth, label='Anonymity Set',color='#c82423')
+    barh_tx = ax.barh(y_pos - heighth, txCnts,  height=heighth, label='交易',color='#2878b5',alpha=alp,hatch='///')
+    barh_d = ax.barh(y_pos , dCnts, height=heighth, label='存款交易',color='#9ac9db',alpha=alp)
+    barh_w = ax.barh(y_pos, wCnts, height=heighth, left=dCnts, label='区块交易',color='#f8ac8c',alpha=alp)
+    barh_as = ax.barh(y_pos + heighth, asCnts, heighth, label='匿名集',color='#c82423',alpha=alp)
 
     ax.set_xlim(0,1500,auto=True)
     kwargs=dict(fontproperties='Times New Roman',fontstyle='italic',size=14,fontweight='demibold')
@@ -457,7 +456,7 @@ def usdcCnt():
     plt.show()
 
 def usdtCnt():
-    values = ['100USDT', '1000USDT']
+    values = ['100USDT', '1,000USDT']
     txCnts = [770,2733]
     dCnts = [359,1167]
     wCnts = [410,1565]
@@ -469,7 +468,7 @@ def usdtCnt():
     heighth = total_heighth / n
 
     # 
-    fig,ax = plt.subplots(dpi=200)
+    fig,ax = plt.subplots(dpi=200,figsize=(7,2.5))
 
 
     ax.set_yticks(y_pos, labels=values, fontsize=18, fontname='Times New Roman',fontweight='bold')
@@ -478,13 +477,13 @@ def usdtCnt():
     ax.spines.top.set_visible(False)
 
     # 设置边框距离
-    fig.subplots_adjust(top=0.99,bottom=0.1,left=0.18,right=0.97)
+    fig.subplots_adjust(top=0.99,bottom=0.1,left=0.193,right=0.94)
 
     # 绘制柱形图
-    barh_tx = ax.barh(y_pos - heighth, txCnts,  height=heighth, label='Transactions',color='#2878b5')
-    barh_d = ax.barh(y_pos , dCnts, height=heighth, label='Deposit',color='#9ac9db')
-    barh_w = ax.barh(y_pos, wCnts, height=heighth, left=dCnts, label='Withdraw',color='#f8ac8c')
-    barh_as = ax.barh(y_pos + heighth, asCnts, heighth, label='Anonymity Set',color='#c82423')
+    barh_tx = ax.barh(y_pos - heighth, txCnts,  height=heighth, label='交易',color='#2878b5',alpha=alp,hatch='///')
+    barh_d = ax.barh(y_pos , dCnts, height=heighth, label='存款交易',color='#9ac9db',alpha=alp)
+    barh_w = ax.barh(y_pos, wCnts, height=heighth, left=dCnts, label='区块交易',color='#f8ac8c',alpha=alp)
+    barh_as = ax.barh(y_pos + heighth, asCnts, heighth, label='匿名集',color='#c82423',alpha=alp)
 
     ax.set_xlim(0,2900,auto=True)
     kwargs=dict(fontproperties='Times New Roman',fontstyle='italic',size=14,fontweight='demibold')
@@ -515,7 +514,7 @@ def wbtcCnt():
     heighth = total_heighth / n
 
     # 
-    fig,ax = plt.subplots(dpi=200)
+    fig,ax = plt.subplots(dpi=200, figsize=(7,4))
 
 
     ax.set_yticks(y_pos, labels=values, fontsize=18, fontname='Times New Roman',fontweight='bold')
@@ -527,10 +526,10 @@ def wbtcCnt():
     fig.subplots_adjust(top=0.99,bottom=0.085,left=0.17,right=0.935)
 
     # 绘制柱形图
-    barh_tx = ax.barh(y_pos - heighth, txCnts,  height=heighth, label='Transactions',color='#2878b5')
-    barh_d = ax.barh(y_pos , dCnts, height=heighth, label='Deposit',color='#9ac9db')
-    barh_w = ax.barh(y_pos, wCnts, height=heighth, left=dCnts, label='Withdraw',color='#f8ac8c')
-    barh_as = ax.barh(y_pos + heighth, asCnts, heighth, label='Anonymity Set',color='#c82423')
+    barh_tx = ax.barh(y_pos - heighth, txCnts,  height=heighth, label='交易',color='#2878b5',alpha=alp,hatch='///')
+    barh_d = ax.barh(y_pos , dCnts, height=heighth, label='存款交易',color='#9ac9db',alpha=alp)
+    barh_w = ax.barh(y_pos, wCnts, height=heighth, left=dCnts, label='区块交易',color='#f8ac8c',alpha=alp)
+    barh_as = ax.barh(y_pos + heighth, asCnts, heighth, label='匿名集',color='#c82423',alpha=alp)
 
     ax.set_xlim(0,2600,auto=True)
     kwargs=dict(fontproperties='Times New Roman',fontstyle='italic',size=14,fontweight='demibold')
@@ -549,7 +548,7 @@ def wbtcCnt():
     plt.show()
 
 def cdaiCnt():
-    values = [ '5000cDAI', '5w cDAI', '50w cDAI', '500w cDAI']
+    values = [ '5,000cDAI', '50,000 cDAI', '500,000 cDAI', '5,000,000 cDAI']
     txCnts = [9,239,181,236]
     dCnts = [5,118,87,114]
     wCnts = [3,121,94,122]
@@ -561,7 +560,7 @@ def cdaiCnt():
     heighth = total_heighth / n
 
     # 
-    fig,ax = plt.subplots(dpi=200)
+    fig,ax = plt.subplots(dpi=200,figsize=(7,5))
 
 
     ax.set_yticks(y_pos, labels=values, fontsize=18, fontname='Times New Roman',fontweight='bold')
@@ -573,10 +572,10 @@ def cdaiCnt():
     fig.subplots_adjust(top=0.99,bottom=0.08,left=0.18,right=0.98)
 
     # 绘制柱形图
-    barh_tx = ax.barh(y_pos - heighth, txCnts,  height=heighth, label='Transactions',color='#2878b5')
-    barh_d = ax.barh(y_pos , dCnts, height=heighth, label='Deposit',color='#9ac9db')
-    barh_w = ax.barh(y_pos, wCnts, height=heighth, left=dCnts, label='Withdraw',color='#f8ac8c')
-    barh_as = ax.barh(y_pos + heighth, asCnts, heighth, label='Anonymity Set',color='#c82423')
+    barh_tx = ax.barh(y_pos - heighth, txCnts,  height=heighth, label='交易',color='#2878b5',alpha=alp,hatch='///')
+    barh_d = ax.barh(y_pos , dCnts, height=heighth, label='存款交易',color='#9ac9db',alpha=alp)
+    barh_w = ax.barh(y_pos, wCnts, height=heighth, left=dCnts, label='区块交易',color='#f8ac8c',alpha=alp)
+    barh_as = ax.barh(y_pos + heighth, asCnts, heighth, label='匿名集',color='#c82423',alpha=alp)
 
     ax.set_xlim(0,250,auto=True)
     kwargs=dict(fontproperties='Times New Roman',fontstyle='italic',size=14,fontweight='demibold')
@@ -597,7 +596,7 @@ def cdaiCnt():
 # ethCnt()
 # typeCnt()
 # daiCnt()
-# cdaiCnt()
+cdaiCnt()
 # wbtcCnt()
-usdcCnt()
+# usdcCnt()
 # usdtCnt()

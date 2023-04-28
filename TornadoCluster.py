@@ -99,9 +99,13 @@ def Cluster(tp, rule):
             w.writerow(row)
 
 
-def staticAnonymity(type,topk, cnt):
+def staticAnonymity(type):
     path = Constant.resultPath
-    cntdf = pd.DataFrame(index = values)
+    res_dir = 'deanonymity_result.csv'
+    if os.path.exists(path + res_dir):
+        cntdf = utils.readCsvFile(path + res_dir,0)
+    else:
+        cntdf = pd.DataFrame(index = values)
     for value in values:
         uSet = set()
         allUserList = []
@@ -117,14 +121,34 @@ def staticAnonymity(type,topk, cnt):
                         utils.clusterAppend(allUserList, uClusterSet)
                         for address in line:
                             uSet.add(address)
-                u = len(allUserList)
-                a = len(uSet)
-                print("[Heuristic" + suf + "] Total clustered "+ value +" user size:" + str(u))
-                print("[Heuristic" + suf + "] Total clustered "+ value +" address size:", str(a))
-                col = ['U'+suf,'De-ASet'+suf]
-                cntdf.loc[value,col] = u,a
+            u = len(allUserList)
+            a = len(uSet)
+            print("[Heuristic] Total clustered "+ value +" user size:" + str(u))
+            print("[Heuristic] Total clustered "+ value +" address size:", str(a))
+            col = ['U-Heuristic','De-ASet-Heuristic']
+            cntdf.loc[value,col] = u,a
+        base_u = allUserList.copy()
+        base_a = uSet.copy()
         if 'mode' in type:
             suffix = ['_rule5','_rule6']
+            for suf in suffix:
+                uthis = allUserList.copy()
+                athis = uSet.copy()
+                file = value + suf +'.csv'
+                dir = path + file
+                with open(dir, "r") as f:
+                    reader = csv.reader(f)
+                    for line in reader:
+                        uClusterSet = set(line)
+                        utils.clusterAppend(uthis, uClusterSet)
+                        for address in line:
+                            athis.add(address)
+                u = len(uthis)
+                a = len(athis)
+                print("[Mode" + suf + "] Add clustered "+ value +" user size:" + str(u))
+                print("[Mode" + suf + "] Add clustered "+ value +" address size:", str(a))
+                col = ['U'+suf,'De-ASet'+suf]
+                cntdf.loc[value,col] = u,a
             for suf in suffix:
                 file = value + suf +'.csv'
                 dir = path + file
@@ -135,36 +159,49 @@ def staticAnonymity(type,topk, cnt):
                         utils.clusterAppend(allUserList, uClusterSet)
                         for address in line:
                             uSet.add(address)
-                u = len(allUserList)
-                a = len(uSet)
-                print("[Mode" + suf + "] Add clustered "+ value +" user size:" + str(u))
-                print("[Mode" + suf + "] Add clustered "+ value +" address size:", str(a))
-                col = ['U'+suf,'De-ASet'+suf]
-                cntdf.loc[value,col] = u,a
-        if 'apriori' in type:
-            prefix = 'Apriori_'
-            suffix = '_Top_' + str(topk) + '_' + str(cnt)
-            file = prefix + value + suffix + '.csv'
+            u = len(allUserList)
+            a = len(uSet)
+            print("[Mode] Add clustered "+ value +" user size:" + str(u))
+            print("[Mode] Add clustered "+ value +" address size:", str(a))
+            col = ['U-mode','De-ASet-mode']
+            cntdf.loc[value,col] = u,a
+        if 'mine' in type:
+            suffix = '_mine'
+            file = value + suffix + '.csv'
             dir = path + file
             if os.path.exists(dir):
                 with open(dir, "r") as f:
                     reader = csv.reader(f)
                     for line in reader:
-                        uClusterSet = set(line[1:])
+                        uClusterSet = set(line)
                         utils.clusterAppend(allUserList, uClusterSet)
                         for address in uClusterSet:
                             uSet.add(address)
                 u = len(allUserList)
                 a = len(uSet)
-                print("[Apriori] Add clustered "+ value +" user size:" + str(len(allUserList)))
-                print("[Apriori] Add clustered "+ value +" address size:", str(len(uSet)))
-                col = [prefix + 'U'+suffix,prefix+'De-ASet'+suffix]
+                print("[Mine] Add clustered "+ value +" user size:" + str(len(allUserList)))
+                print("[Mine] Add clustered "+ value +" address size:", str(len(uSet)))
+                col = ['U'+suffix,'De-ASet'+suffix]
+                cntdf.loc[value,col] = u,a
+                print(len(base_u))
+                print(len(base_a))
+                with open(dir, "r") as f:
+                    reader = csv.reader(f)
+                    for line in reader:
+                        uClusterSet = set(line)
+                        utils.clusterAppend(base_u, uClusterSet)
+                        for address in uClusterSet:
+                            base_a.add(address)
+                u = len(base_u)
+                a = len(base_a)
+                print("[FP-Growth] Add clustered "+ value +" user size:" + str(u))
+                print("[FP-Growth] Add clustered "+ value +" address size:", str(a))
+                suffix = '_fp'
+                col = ['U'+suffix,'De-ASet'+suffix]
                 cntdf.loc[value,col] = u,a
             else:
                 print(dir + " doesnt exist!!")
-
-    
-    cntdf.to_excel(path + 'deanonymity_result.xlsx')
+    utils.saveCsvFile(path + res_dir,cntdf)
 
 if __name__ == '__main__':
     # 0000000
@@ -204,7 +241,7 @@ if __name__ == '__main__':
         print("{: ^100s}".format("----------------------------------------------------------------"))
         Cluster(tx_path, "mine")
         
-    # staticAnonymity([type1,type3],500,3)
+    # staticAnonymity([type1,type3])
 
     # print("{: ^100s}".format(" FINAL RESULT"))
     # print("{: ^100s}".format("----------------------------------------------------------------"))
