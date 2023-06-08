@@ -193,7 +193,7 @@ def typeCnt():
     heighth = total_heighth / n
 
     # 
-    fig = plt.figure(figsize=(1,2),dpi=180)
+    fig = plt.figure(figsize=(1,2),dpi=150)
     gs = fig.add_gridspec(1,2,width_ratios=(4,1))
     ax1 = fig.add_subplot(gs[0,0])
     ax2 = fig.add_subplot(gs[0,1],sharey=ax1)
@@ -218,15 +218,15 @@ def typeCnt():
     fig.subplots_adjust(top=0.99,bottom=0.05,left=0.07,right=0.98,wspace=0.03)
 
     # 绘制柱形图
-    barh_tx = ax1.barh(y_pos - heighth, txCnts,  height=heighth, label='混币交易',color='#2878b5',alpha=alp,hatch='////')
-    barh_d = ax1.barh(y_pos , dCnts, height=heighth, label='混币存款交易',color='#9ac9db',alpha=alp)
-    barh_w = ax1.barh(y_pos, wCnts, height=heighth, left=dCnts, label='混币取款交易',color='#f8ac8c',alpha=alp)
-    barh_as = ax1.barh(y_pos + heighth, asCnts, heighth, label='匿名集',color='#c82423',alpha=alp)
+    barh_tx = ax1.barh(y_pos - heighth, txCnts,  height=heighth, label='混币交易数量',color='#2878b5',alpha=alp,hatch='////')
+    barh_d = ax1.barh(y_pos , dCnts, height=heighth, label='混币存款交易数量',color='#9ac9db',alpha=alp)
+    barh_w = ax1.barh(y_pos, wCnts, height=heighth, left=dCnts, label='混币取款交易数量',color='#f8ac8c',alpha=alp)
+    barh_as = ax1.barh(y_pos + heighth, asCnts, heighth, label='匿名集大小',color='#c82423',alpha=alp)
 
-    barh_tx2 = ax2.barh(y_pos - heighth, txCnts,  height=heighth, label='混币交易',color='#2878b5',alpha=alp,hatch='////')
-    barh_d2 = ax2.barh(y_pos, dCnts, height=heighth, label='混币存款交易',color='#9ac9db',alpha=alp)
-    barh_w2 = ax2.barh(y_pos, wCnts, height=heighth, left=dCnts, label='混币取款交易',color='#f8ac8c',alpha=alp)
-    barh_as2 = ax2.barh(y_pos + heighth, asCnts, heighth, label='匿名集',color='#c82423',alpha=alp)
+    barh_tx2 = ax2.barh(y_pos - heighth, txCnts,  height=heighth, label='混币交易数量',color='#2878b5',alpha=alp,hatch='////')
+    barh_d2 = ax2.barh(y_pos, dCnts, height=heighth, label='混币存款交易数量',color='#9ac9db',alpha=alp)
+    barh_w2 = ax2.barh(y_pos, wCnts, height=heighth, left=dCnts, label='混币取款交易数量',color='#f8ac8c',alpha=alp)
+    barh_as2 = ax2.barh(y_pos + heighth, asCnts, heighth, label='匿名集大小',color='#c82423',alpha=alp)
 
     # ax1.set_xscale('log')
     ax1.set_xlim(0,16000,auto=True)
@@ -594,9 +594,9 @@ def cdaiCnt():
     plt.show()
 # txCntByType()
 # ethCnt()
-# typeCnt()
+typeCnt()
 # daiCnt()
-cdaiCnt()
+# cdaiCnt()
 # wbtcCnt()
 # usdcCnt()
 # usdtCnt()
